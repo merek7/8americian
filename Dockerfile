@@ -18,10 +18,10 @@ COPY downloads /usr/share/nginx/html/downloads
 # Permissions correctes
 RUN chmod -R 755 /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 9024
 
 # Healthcheck pour Coolify
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
-  CMD wget -q --spider http://localhost/ || exit 1
+  CMD wget -q --spider http://localhost:9024/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]
