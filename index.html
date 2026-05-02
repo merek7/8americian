@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="8 American — Version Togolaise. Jeu de cartes stratégique. Solo vs IA, multi local, multijoueur en ligne, tournois. Auto-hébergement possible." />
+<meta name="theme-color" content="#0d2a1c" />
+<meta property="og:title" content="8 American — Version Togolaise" />
+<meta property="og:description" content="Le jeu de cartes stratégique togolais. Solo, multi local, multijoueur en ligne, tournois." />
+<meta property="og:image" content="assets/logo.png" />
+<meta property="og:type" content="website" />
+<title>8 American — Version Togolaise</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ─── NAV STICKY ─────────────────────────────────────── -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-brand">
+      <img src="assets/logo.png" alt="" class="nav-logo" />
+      <span>8 American</span>
+    </a>
+    <div class="nav-links">
+      <a href="#download">Télécharger</a>
+      <a href="auto-heberger.html">Auto-héberger</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a href="#download" class="btn btn-primary btn-sm">Télécharger</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ───────────────────────────────────────────── -->
+<header class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="floating-cards" aria-hidden="true">
+    <div class="float-card fc-1">
+      <svg viewBox="0 0 88 124"><use href="#card-8s" /></svg>
+    </div>
+    <div class="float-card fc-2">
+      <svg viewBox="0 0 88 124"><use href="#card-ah" /></svg>
+    </div>
+    <div class="float-card fc-3">
+      <svg viewBox="0 0 88 124"><use href="#card-jk" /></svg>
+    </div>
+    <div class="float-card fc-4">
+      <svg viewBox="0 0 88 124"><use href="#card-2s" /></svg>
+    </div>
+    <div class="float-card fc-5">
+      <svg viewBox="0 0 88 124"><use href="#card-7c" /></svg>
+    </div>
+    <div class="float-card fc-6">
+      <svg viewBox="0 0 88 124"><use href="#card-jd" /></svg>
+    </div>
+  </div>
+
+  <div class="container hero-content">
+    <img src="assets/logo.png" alt="8 American" class="logo" />
+    <div class="hero-badge">v1.01.beta — Disponible maintenant</div>
+    <h1>8 American</h1>
+    <p class="hero-subtitle">Version <span class="accent">Togolaise</span></p>
+    <p class="hero-tagline">
+      Le jeu de cartes stratégique 100% togolais.<br />
+      Solo · Local · En ligne · Tournois.
+    </p>
+
+    <div class="cta-row">
+      <a href="#download" class="btn btn-primary btn-large">⬇ Télécharger Windows</a>
+      <a href="auto-heberger.html" class="btn btn-ghost btn-large">⚙ Héberger un serveur</a>
+    </div>
+
+    <div class="hero-stats">
+      <div><strong>2-10</strong><span>joueurs</span></div>
+      <div><strong>3</strong><span>niveaux d'IA</span></div>
+      <div><strong>3</strong><span>modes tournoi</span></div>
+      <div><strong>11</strong><span>pages tutoriel</span></div>
+    </div>
+  </div>
+
+  <a href="#download" class="hero-scroll" aria-label="Faire défiler">▼</a>
+</header>
+
+<main>
+  <!-- ─── DOWNLOAD ─────────────────────────────────────── -->
+  <section id="download" class="section section-alt">
+    <div class="container">
+      <span class="eyebrow">Téléchargement</span>
+      <h2>Lance ta première partie</h2>
+      <p class="lead">Beta gratuite — Windows uniquement pour le moment.</p>
+
+      <div class="download-card">
+        <div class="dl-info">
+          <div class="dl-icon">⊞</div>
+          <h3>Client Windows</h3>
+          <p class="dl-meta">~103 Mo · Fichier autonome · Aucune installation requise</p>
+          <ul class="features-list">
+            <li>Solo vs IA, multi local hot-seat</li>
+            <li>Multijoueur en ligne (rejoindre / héberger)</li>
+            <li>3 modes tournoi + stats persistantes</li>
+            <li>5 tapis de jeu personnalisables</li>
+            <li>Tutoriel intégré (11 pages illustrées)</li>
+            <li>Sécurité v1.01 : rate-limit, mot de passe, validation</li>
+          </ul>
+        </div>
+        <div class="dl-action">
+          <a href="downloads/8American_v1.01.beta.exe" class="btn btn-primary btn-mega" download>
+            <span class="btn-arrow">⬇</span>
+            <span>
+              <strong>Télécharger v1.01.beta</strong>
+              <small>Windows 10 / 11 — 64 bits</small>
+            </span>
+          </a>
+          <p class="sha-note">SHA-256 dans <a href="downloads/SHA256SUMS.txt">SHA256SUMS.txt</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ─── FAQ ──────────────────────────────────────────── -->
+  <section id="faq" class="section">
+    <div class="container">
+      <span class="eyebrow">Support</span>
+      <h2>Questions fréquentes</h2>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Y a-t-il une version Mac / Linux ?</summary>
+          <p>Pas pour la beta. La v1.0 cible Windows pour aller vite. Linux et macOS sont prévus en v1.1 — la base Godot le permet sans réécriture.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Le jeu est-il gratuit ?</summary>
+          <p>Oui, totalement. Aucun achat in-app, aucune publicité. Le client est libre, le serveur peut être auto-hébergé sans frais.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Puis-je jouer hors ligne ?</summary>
+          <p>Oui : Solo vs IA, multi local hot-seat et tournoi fonctionnent 100% offline. Seul le multijoueur en ligne nécessite un serveur.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Mes parties multi sont-elles privées ?</summary>
+          <p>Oui si tu utilises l'option <code>--password=</code> sur ton serveur dédié. Les hôtes "amis" peuvent aussi définir un mot de passe via l'interface.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Combien de joueurs maximum ?</summary>
+          <p>Jusqu'à 10 joueurs simultanés, en local comme en ligne.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Comment signaler un bug ou demander une fonctionnalité ?</summary>
+          <p>Écris à <a href="mailto:kmerek7@protonmail.com">kmerek7@protonmail.com</a> avec une capture d'écran et la version (visible en bas du menu principal).</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Puis-je jouer en LAN sans Internet ?</summary>
+          <p>Oui. Sur le même réseau local, héberge depuis le menu "Multijoueur en ligne" et donne ton IP locale aux autres. Pas besoin de VPS.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-grid">
+    <div>
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="" />
+        <strong>8 American</strong>
+      </div>
+      <p>Le jeu de cartes stratégique togolais.</p>
+    </div>
+    <div>
+      <h4>Liens</h4>
+      <ul>
+        <li><a href="#download">Télécharger</a></li>
+        <li><a href="auto-heberger.html">Auto-héberger</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="mailto:kmerek7@protonmail.com">Contact bug / feedback</a></li>
+        <li><a href="auto-heberger.html">Guide auto-hébergement</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>À propos</h4>
+      <p class="muted">v1.01.beta · Made with Godot 4.6.2 · © 2026</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── SVG SPRITES (cartes décoratives) ──────────────── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="card-base" viewBox="0 0 88 124">
+      <rect x="2" y="2" width="84" height="120" rx="8" ry="8" fill="#f3eedb" stroke="#0d2a1c" stroke-width="1.5"/>
+    </symbol>
+    <symbol id="card-8s" viewBox="0 0 88 124">
+      <use href="#card-base"/>
+      <text x="10" y="22" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#0d0d0d">8</text>
+      <text x="10" y="36" font-size="14" fill="#0d0d0d">♠</text>
+      <text x="44" y="74" text-anchor="middle" font-size="48" fill="#0d0d0d">♠</text>
+      <text x="78" y="118" text-anchor="end" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#0d0d0d">8</text>
+    </symbol>
+    <symbol id="card-ah" viewBox="0 0 88 124">
+      <use href="#card-base"/>
+      <text x="10" y="22" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#c84141">A</text>
+      <text x="10" y="36" font-size="14" fill="#c84141">♥</text>
+      <text x="44" y="74" text-anchor="middle" font-size="48" fill="#c84141">♥</text>
+      <text x="78" y="118" text-anchor="end" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#c84141">A</text>
+    </symbol>
+    <symbol id="card-jk" viewBox="0 0 88 124">
+      <rect x="2" y="2" width="84" height="120" rx="8" ry="8" fill="#1a3a25" stroke="#ffd966" stroke-width="1.5"/>
+      <text x="44" y="56" text-anchor="middle" font-family="Cinzel,serif" font-weight="700" font-size="16" fill="#ffd966">JOKER</text>
+      <text x="44" y="80" text-anchor="middle" font-size="22" fill="#ffd966">★</text>
+    </symbol>
+    <symbol id="card-2s" viewBox="0 0 88 124">
+      <use href="#card-base"/>
+      <text x="10" y="22" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#0d0d0d">2</text>
+      <text x="10" y="36" font-size="14" fill="#0d0d0d">♠</text>
+      <text x="44" y="74" text-anchor="middle" font-size="48" fill="#0d0d0d">♠</text>
+      <text x="78" y="118" text-anchor="end" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#0d0d0d">2</text>
+    </symbol>
+    <symbol id="card-7c" viewBox="0 0 88 124">
+      <use href="#card-base"/>
+      <text x="10" y="22" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#0d0d0d">7</text>
+      <text x="10" y="36" font-size="14" fill="#0d0d0d">♣</text>
+      <text x="44" y="74" text-anchor="middle" font-size="48" fill="#0d0d0d">♣</text>
+      <text x="78" y="118" text-anchor="end" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#0d0d0d">7</text>
+    </symbol>
+    <symbol id="card-jd" viewBox="0 0 88 124">
+      <use href="#card-base"/>
+      <text x="10" y="22" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#c84141">J</text>
+      <text x="10" y="36" font-size="14" fill="#c84141">♦</text>
+      <text x="44" y="74" text-anchor="middle" font-size="48" fill="#c84141">♦</text>
+      <text x="78" y="118" text-anchor="end" font-family="Inter,sans-serif" font-weight="700" font-size="16" fill="#c84141">J</text>
+    </symbol>
+  </defs>
+</svg>
+
+<script src="script.js"></script>
+</body>
+</html>

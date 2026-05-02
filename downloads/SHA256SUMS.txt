@@ -1,0 +1,2 @@
+8c758fe2d98a60f1a1b8c5b01d9d628f2584dd1dff08fd903becc869360d48dd *8American_v1.01.beta.exe
+a873dfdd51a50c0d3027de85deace440899b723be2f1b2a4163ef44a9ebdf62b *server-package.tar.gz

@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Documentation complète pour auto-héberger un serveur 8 American (VPS Linux, Coolify, LAN local)." />
+<meta name="theme-color" content="#0d2a1c" />
+<title>Auto-hébergement — 8 American</title>
+<link rel="icon" type="image/png" href="assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+<style>
+  /* ─── Page documentation ───────────────────────────── */
+  body { background: var(--green-deep); }
+
+  .doc-shell {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 56px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 110px 32px 80px;
+  }
+
+  @media (max-width: 980px) {
+    .doc-shell { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 32px; }
+  }
+
+  /* TOC sticky */
+  .doc-toc {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 217, 102, 0.18);
+    border-radius: 14px;
+    padding: 24px;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+  }
+
+  @media (max-width: 980px) {
+    .doc-toc { position: static; max-height: none; }
+  }
+
+  .doc-toc h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold-dim);
+    margin-bottom: 14px;
+  }
+
+  .doc-toc ul { list-style: none; }
+  .doc-toc li { margin-bottom: 8px; }
+  .doc-toc a {
+    color: var(--cream-mute);
+    font-size: 14px;
+    display: block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .doc-toc a:hover, .doc-toc a.active {
+    color: var(--gold);
+    background: rgba(255, 217, 102, 0.06);
+    border-left-color: var(--gold);
+  }
+
+  /* Contenu */
+  .doc-main { max-width: 820px; min-width: 0; }
+
+  .doc-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gold);
+    font-size: 14px;
+    margin-bottom: 24px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 217, 102, 0.25);
+    background: rgba(255, 217, 102, 0.05);
+    transition: all 0.15s;
+  }
+  .doc-back:hover {
+    background: rgba(255, 217, 102, 0.12);
+    border-color: var(--gold);
+  }
+
+  .doc-main h1 {
+    font-size: clamp(36px, 5vw, 52px);
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .doc-main .doc-intro {
+    font-size: 18px;
+    color: var(--cream-mute);
+    margin-bottom: 56px;
+    line-height: 1.7;
+  }
+
+  .doc-main h2 {
+    font-size: 30px;
+    color: var(--gold);
+    margin: 64px 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 217, 102, 0.2);
+    scroll-margin-top: 100px;
+  }
+
+  .doc-main h2:first-of-type { margin-top: 0; }
+
+  .doc-main h3 {
+    font-size: 22px;
+    color: var(--gold-soft);
+    margin: 32px 0 12px;
+    scroll-margin-top: 100px;
+  }
+
+  .doc-main h4 {
+    font-size: 17px;
+    color: var(--cream);
+    margin: 20px 0 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+  }
+
+  .doc-main p, .doc-main ul, .doc-main ol {
+    color: var(--cream);
+    margin-bottom: 16px;
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+
+  .doc-main ul, .doc-main ol { padding-left: 24px; }
+  .doc-main li { margin-bottom: 6px; }
+  .doc-main ul { list-style: disc; }
+  .doc-main ol { list-style: decimal; }
+
+  .doc-main pre {
+    background: #050f0a;
+    border: 1px solid rgba(255, 217, 102, 0.15);
+    border-radius: 10px;
+    padding: 18px 22px;
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    font-size: 13.5px;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    line-height: 1.6;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .doc-main pre code { color: var(--cream); background: none; padding: 0; }
+
+  .doc-main code {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    background: rgba(255, 217, 102, 0.10);
+    border: 1px solid rgba(255, 217, 102, 0.15);
+    color: var(--gold);
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.92em;
+  }
+
+  .doc-main table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 14px;
+  }
+
+  .doc-main th, .doc-main td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 217, 102, 0.12);
+  }
+
+  .doc-main th {
+    color: var(--gold);
+    background: rgba(255, 217, 102, 0.05);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .doc-main td { color: var(--cream-mute); }
+  .doc-main td:first-child code { color: var(--gold); }
+
+  .doc-main a { color: var(--gold); text-decoration: underline; text-decoration-color: rgba(255, 217, 102, 0.3); }
+  .doc-main a:hover { text-decoration-color: var(--gold); }
+
+  /* Callouts */
+  .callout {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 20px 0 24px;
+    border-left: 3px solid;
+    font-size: 14.5px;
+  }
+  .callout-info {
+    background: rgba(76, 153, 255, 0.08);
+    border-color: #4c99ff;
+    color: var(--cream);
+  }
+  .callout-warn {
+    background: rgba(255, 165, 0, 0.10);
+    border-color: #ffb84d;
+    color: var(--cream);
+  }
+  .callout-danger {
+    background: rgba(200, 65, 65, 0.10);
+    border-color: var(--red-burst);
+    color: var(--cream);
+  }
+  .callout strong { display: block; margin-bottom: 4px; color: var(--gold); }
+
+  /* Cards comparatifs */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 24px 0 32px;
+  }
+
+  @media (max-width: 760px) { .compare-grid { grid-template-columns: 1fr; } }
+
+  .compare-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 217, 102, 0.18);
+    border-radius: 12px;
+    padding: 22px;
+  }
+
+  .compare-card h4 {
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+
+  .compare-card .meta {
+    font-size: 12px;
+    color: var(--cream-mute);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+
+  .compare-card ul { padding-left: 18px; font-size: 13px; }
+  .compare-card li { color: var(--cream-mute); margin-bottom: 4px; }
+  .compare-card .pros li::marker { content: "✓ "; color: var(--gold); }
+
+  /* Footer doc */
+  .doc-footer {
+    margin-top: 80px;
+    padding: 32px;
+    background: rgba(255, 217, 102, 0.04);
+    border: 1px solid rgba(255, 217, 102, 0.18);
+    border-radius: 14px;
+    text-align: center;
+  }
+
+  .doc-footer h3 { color: var(--gold); margin-bottom: 8px; }
+  .doc-footer p { color: var(--cream-mute); margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV STICKY (réutilisée) ───────────────────────── -->
+<nav class="nav scrolled" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <img src="assets/logo.png" alt="" class="nav-logo" />
+      <span>8 American</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#download">Télécharger</a>
+      <a href="auto-heberger.html" class="active">Auto-héberger</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+    <a href="index.html#download" class="btn btn-primary btn-sm">Télécharger</a>
+  </div>
+</nav>
+
+<!-- ─── DOC LAYOUT ───────────────────────────────────── -->
+<div class="doc-shell">
+
+  <!-- Sidebar TOC -->
+  <aside class="doc-toc" id="toc">
+    <h3>Sommaire</h3>
+    <ul>
+      <li><a href="#overview">Vue d'ensemble</a></li>
+      <li><a href="#choisir">Choisir sa méthode</a></li>
+      <li><a href="#vps">Méthode 1 — VPS Linux</a></li>
+      <li><a href="#coolify">Méthode 2 — Coolify</a></li>
+      <li><a href="#lan">Méthode 3 — LAN local</a></li>
+      <li><a href="#cli">Référence CLI</a></li>
+      <li><a href="#securite">Sécurité</a></li>
+      <li><a href="#maj">Mise à jour</a></li>
+      <li><a href="#troubleshoot">Dépannage</a></li>
+      <li><a href="#support">Support</a></li>
+    </ul>
+  </aside>
+
+  <!-- Contenu -->
+  <article class="doc-main">
+
+    <a href="index.html" class="doc-back">← Retour à l'accueil</a>
+
+    <h1>Auto-hébergement</h1>
+    <p class="doc-intro">
+      Tout ce qu'il faut savoir pour faire tourner ton propre serveur 8 American — version dédiée VPS,
+      via Coolify, ou en local sur ton PC pour des parties LAN entre amis.
+    </p>
+
+    <!-- ─── VUE D'ENSEMBLE ───────────────────────────── -->
+    <h2 id="overview">Vue d'ensemble</h2>
+
+    <p>
+      Le serveur 8 American est un binaire Godot tournant en mode <code>--headless</code>.
+      Il écoute sur un port UDP (9080 par défaut), gère la logique de jeu, et relaie les actions des joueurs
+      via le protocole ENet.
+    </p>
+
+    <h4>Pourquoi auto-héberger ?</h4>
+    <ul>
+      <li>Parties privées entre amis avec mot de passe</li>
+      <li>Maîtrise totale : ton serveur, tes règles, tes données</li>
+      <li>Pas de limite de temps ou de joueurs au-delà des 10 simultanés</li>
+      <li>Possibilité de modifier le code source pour expérimenter</li>
+    </ul>
+
+    <h4>Caractéristiques techniques</h4>
+    <ul>
+      <li><strong>Empreinte</strong> : ~512 Mo RAM en idle, ~5% CPU sur 1 vCPU</li>
+      <li><strong>Bande passante</strong> : &lt; 1 Mo/heure pour 10 joueurs</li>
+      <li><strong>Latence</strong> : ENet UDP, &lt; 50 ms en local, 50-200 ms en intercontinental</li>
+      <li><strong>Persistance</strong> : aucune (chaque crash redémarre le service propre)</li>
+    </ul>
+
+    <!-- ─── CHOIX MÉTHODE ────────────────────────────── -->
+    <h2 id="choisir">Choisir sa méthode</h2>
+
+    <p>Trois façons de faire selon ton besoin :</p>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>VPS Linux + systemd</h4>
+        <p class="meta">Production stable</p>
+        <ul class="pros">
+          <li>Auto-restart, logs centralisés</li>
+          <li>Démarrage au boot</li>
+          <li>Hardening sécurité complet</li>
+          <li>Idéal pour serveur public 24/7</li>
+        </ul>
+      </div>
+
+      <div class="compare-card">
+        <h4>Coolify</h4>
+        <p class="meta">Déploiement managé</p>
+        <ul class="pros">
+          <li>Interface web pour gérer</li>
+          <li>Update en 1 clic via Git</li>
+          <li>Pas de systemd à toucher</li>
+          <li>Idéal si tu connais Coolify</li>
+        </ul>
+      </div>
+
+      <div class="compare-card">
+        <h4>LAN local</h4>
+        <p class="meta">Sans VPS</p>
+        <ul class="pros">
+          <li>Aucun serveur distant requis</li>
+          <li>Tu héberges depuis ton PC</li>
+          <li>Idéal pour parties entre amis</li>
+          <li>Mise en place en 30 secondes</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ─── VPS LINUX ────────────────────────────────── -->
+    <h2 id="vps">Méthode 1 — VPS Linux + systemd</h2>
+
+    <p>Recommandé pour un serveur public 24/7 ou des parties privées Internet.</p>
+
+    <h3>Pré-requis</h3>
+    <ul>
+      <li>VPS Linux x86_64 (Ubuntu 22.04+ ou Debian 12+ recommandé)</li>
+      <li>1 vCPU, 512 Mo RAM minimum</li>
+      <li>Port UDP 9080 ouvert (UFW + firewall provider)</li>
+      <li>Accès SSH avec sudo</li>
+    </ul>
+
+    <h3>Étape 1 — Utilisateur dédié</h3>
+    <div class="callout callout-warn">
+      <strong>⚠ Sécurité</strong>
+      Ne fais jamais tourner le service en root. On crée un user système non-privilégié.
+    </div>
+    <pre><code>sudo useradd -r -m -s /bin/bash jeucartes
+sudo mkdir -p /opt/jeu-cartes
+sudo chown -R jeucartes:jeucartes /opt/jeu-cartes</code></pre>
+
+    <h3>Étape 2 — Installer Godot</h3>
+    <pre><code>sudo apt update && sudo apt install -y wget unzip
+cd /opt
+sudo wget https://github.com/godotengine/godot/releases/download/4.6.2-stable/Godot_v4.6.2-stable_linux.x86_64.zip
+sudo unzip Godot_v4.6.2-stable_linux.x86_64.zip
+sudo mv Godot_v4.6.2-stable_linux.x86_64 godot
+sudo chmod +x godot
+sudo ln -sf /opt/godot /usr/local/bin/godot
+godot --version</code></pre>
+
+    <h3>Étape 3 — Copier le projet</h3>
+    <p>Télécharge l'archive serveur depuis la page d'accueil, puis depuis ton PC :</p>
+    <pre><code>scp server-package.tar.gz user@TON_IP_VPS:/tmp/</code></pre>
+    <p>Sur le VPS :</p>
+    <pre><code>sudo tar -xzf /tmp/server-package.tar.gz -C /opt/jeu-cartes --strip-components=1
+sudo chown -R jeucartes:jeucartes /opt/jeu-cartes</code></pre>
+
+    <h3>Étape 4 — Premier import</h3>
+    <pre><code>sudo -u jeucartes env HOME=/opt/jeu-cartes godot --headless \
+  --path /opt/jeu-cartes --import</code></pre>
+
+    <h3>Étape 5 — Service systemd</h3>
+    <p>Crée <code>/etc/systemd/system/jeu-cartes.service</code> :</p>
+    <pre><code>[Unit]
+Description=8 American — serveur dédié
+After=network.target
+
+[Service]
+Type=simple
+User=jeucartes
+Group=jeucartes
+WorkingDirectory=/opt/jeu-cartes
+Environment=HOME=/opt/jeu-cartes
+ExecStart=/usr/local/bin/godot --headless --path /opt/jeu-cartes -- \
+  --server --port=9080 --start-on=2 --score=50 --password=CHANGE_MOI
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+PrivateTmp=true
+ReadWritePaths=/opt/jeu-cartes
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+    <div class="callout callout-danger">
+      <strong>🔐 Mot de passe</strong>
+      Remplace <code>CHANGE_MOI</code> par un mot de passe fort. Génération :
+      <code>openssl rand -base64 16</code>
+    </div>
+
+    <p>Active et lance :</p>
+    <pre><code>sudo systemctl daemon-reload
+sudo systemctl enable --now jeu-cartes
+sudo journalctl -u jeu-cartes -f</code></pre>
+
+    <h3>Étape 6 — Ouvrir le firewall</h3>
+    <pre><code>sudo ufw allow 9080/udp
+sudo ufw reload</code></pre>
+    <p>Côté provider (Hetzner Cloud Console / OVH / DigitalOcean), ouvre aussi <strong>UDP 9080</strong> dans le firewall externe.</p>
+
+    <h3>Étape 7 — Tester</h3>
+    <p>Depuis le client Windows :</p>
+    <ol>
+      <li>Lance <code>8American_v1.01.beta.exe</code></li>
+      <li>Menu → <strong>Multijoueur en ligne</strong></li>
+      <li>Onglet <strong>Rejoindre</strong></li>
+      <li>IP : ton IP VPS, Port : <code>9080</code>, Mot de passe : celui défini</li>
+      <li><strong>Rejoindre</strong></li>
+    </ol>
+
+    <!-- ─── COOLIFY ───────────────────────────────────── -->
+    <h2 id="coolify">Méthode 2 — Coolify</h2>
+
+    <p>Si tu utilises Coolify pour gérer tes services. Pas de Dockerfile officiel pour le serveur de jeu (Coolify est conçu pour HTTP), mais possible via un container générique.</p>
+
+    <div class="callout callout-info">
+      <strong>ℹ Limitation</strong>
+      Coolify gère bien les services HTTP/TCP mais pas naturellement les UDP exposés.
+      Tu peux contourner en exposant le port UDP via Docker direct, ou rester sur la <a href="#vps">méthode VPS systemd</a> (plus simple pour ce cas).
+    </div>
+
+    <h3>Approche Docker compose</h3>
+    <p>Crée <code>docker-compose.yml</code> dans le repo serveur :</p>
+    <pre><code>services:
+  jeu-cartes:
+    build: .
+    image: 8american-server:latest
+    restart: unless-stopped
+    ports:
+      - "9080:9080/udp"
+    environment:
+      - SERVER_PASSWORD=${SERVER_PASSWORD}
+      - START_ON=2
+      - SCORE_TARGET=50</code></pre>
+
+    <p>Avec ce <code>Dockerfile</code> :</p>
+    <pre><code>FROM debian:12-slim
+
+RUN apt-get update && apt-get install -y wget unzip ca-certificates && \
+    wget -q https://github.com/godotengine/godot/releases/download/4.6.2-stable/Godot_v4.6.2-stable_linux.x86_64.zip && \
+    unzip -q Godot_v4.6.2-stable_linux.x86_64.zip && \
+    mv Godot_v4.6.2-stable_linux.x86_64 /usr/local/bin/godot && \
+    chmod +x /usr/local/bin/godot && \
+    rm -rf *.zip /var/lib/apt/lists/*
+
+WORKDIR /game
+COPY game/ /game/
+
+ENV HOME=/game
+ENV SERVER_PASSWORD=""
+ENV START_ON=2
+ENV SCORE_TARGET=50
+
+RUN godot --headless --path /game --import || true
+
+EXPOSE 9080/udp
+
+CMD godot --headless --path /game -- --server --port=9080 \
+    --start-on=$START_ON --score=$SCORE_TARGET --password=$SERVER_PASSWORD</code></pre>
+
+    <p>Dans Coolify :</p>
+    <ol>
+      <li><strong>+ New Resource</strong> → <strong>Docker Compose</strong></li>
+      <li>Source : repo Git public ou clone privé</li>
+      <li>Variables d'environnement : ajoute <code>SERVER_PASSWORD=ton-mdp</code></li>
+      <li><strong>Deploy</strong></li>
+    </ol>
+
+    <p>Vérifie que ton VPS expose bien <strong>UDP 9080</strong> côté provider firewall (Coolify ne gère que les ports déclarés dans le compose).</p>
+
+    <!-- ─── LAN LOCAL ─────────────────────────────────── -->
+    <h2 id="lan">Méthode 3 — LAN local (sans VPS)</h2>
+
+    <p>Pour des parties entre amis sur le même réseau Wi-Fi/Ethernet — aucun serveur distant nécessaire.</p>
+
+    <h3>Côté hôte (toi)</h3>
+    <ol>
+      <li>Lance <code>8American_v1.01.beta.exe</code></li>
+      <li>Menu → <strong>Multijoueur en ligne</strong></li>
+      <li>Pseudo + (optionnel) mot de passe dans le champ password</li>
+      <li>Clique <strong>Héberger</strong></li>
+      <li>Note ton IP locale (ouvre une console : <code>ipconfig</code> sur Windows, cherche IPv4)</li>
+    </ol>
+
+    <h3>Côté invités</h3>
+    <ol>
+      <li>Même version du jeu, même réseau Wi-Fi</li>
+      <li>Multijoueur en ligne → Rejoindre</li>
+      <li>IP : celle de l'hôte (ex. <code>192.168.1.42</code>)</li>
+      <li>Port : <code>9080</code></li>
+      <li>Mot de passe si défini par l'hôte</li>
+    </ol>
+
+    <div class="callout callout-warn">
+      <strong>⚠ Pare-feu Windows</strong>
+      Au premier lancement de l'hôte, Windows demande l'autorisation. Coche
+      <strong>Réseaux privés</strong> et clique <strong>Autoriser l'accès</strong>.
+      Sinon, les invités ne pourront pas se connecter.
+    </div>
+
+    <p>Quand le nombre requis de joueurs (par défaut 2) est connecté, l'hôte clique <strong>Démarrer la partie</strong> dans le lobby.</p>
+
+    <!-- ─── CLI ───────────────────────────────────────── -->
+    <h2 id="cli">Référence CLI</h2>
+
+    <p>Tous les flags supportés en mode dédié :</p>
+
+    <table>
+      <thead>
+        <tr><th>Flag</th><th>Défaut</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--server</code></td><td>—</td><td>Active le mode dédié (obligatoire)</td></tr>
+        <tr><td><code>--port=N</code></td><td>9080</td><td>Port UDP d'écoute</td></tr>
+        <tr><td><code>--start-on=N</code></td><td>2</td><td>Démarre auto à N joueurs connectés</td></tr>
+        <tr><td><code>--score=N</code></td><td>50</td><td>Score cible (50 ou 100)</td></tr>
+        <tr><td><code>--password=XXX</code></td><td>(aucun)</td><td>Mot de passe requis pour rejoindre</td></tr>
+      </tbody>
+    </table>
+
+    <p>Exemple complet :</p>
+    <pre><code>godot --headless --path /opt/jeu-cartes -- \
+  --server --port=9080 --start-on=4 --score=100 --password=PartieDuSamedi42</code></pre>
+
+    <!-- ─── SÉCURITÉ ──────────────────────────────────── -->
+    <h2 id="securite">Sécurité — récap v1.01.beta</h2>
+
+    <p>Le serveur dédié inclut plusieurs protections de base :</p>
+
+    <table>
+      <thead>
+        <tr><th>Protection</th><th>Détail</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Rate-limit</td><td>30 RPC/sec/peer max, kick automatique si dépassé</td></tr>
+        <tr><td>Mot de passe</td><td><code>--password=</code>, kick si invalide</td></tr>
+        <tr><td>Pseudo plafonné</td><td>32 caractères max, caractères de contrôle filtrés</td></tr>
+        <tr><td>Validation</td><td><code>request_continue_round</code> exige sender = joueur de la partie</td></tr>
+        <tr><td>User non-root</td><td>Service systemd avec <code>User=jeucartes</code></td></tr>
+        <tr><td>Hardening systemd</td><td><code>NoNewPrivileges</code>, <code>ProtectSystem=strict</code>, <code>PrivateTmp</code></td></tr>
+      </tbody>
+    </table>
+
+    <h4>Limites connues</h4>
+    <ul>
+      <li>Trafic ENet <strong>non chiffré</strong> — un sniffer Wi-Fi voit les noms, scores et cartes en clair</li>
+      <li>Le mot de passe transite en clair dans le canal ENet (pas en JSON, mais lisible si interception MITM)</li>
+      <li>Pas de protection CAPTCHA / anti-bot — pour serveur public massif, ajouter un proxy applicatif</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <strong>ℹ Pour usage privé entre amis</strong>
+      Ces limites sont acceptables. Pour un serveur public exposé Internet 24/7, envisager d'ajouter
+      DTLS (<code>ENetMultiplayerPeer.set_dtls_*</code>) dans une version future.
+    </div>
+
+    <!-- ─── MISE À JOUR ───────────────────────────────── -->
+    <h2 id="maj">Mise à jour du serveur</h2>
+
+    <p>Quand une nouvelle version sort :</p>
+
+    <pre><code># Sur ton PC
+scp server-package.tar.gz root@VPS:/tmp/
+
+# Sur le VPS
+sudo systemctl stop jeu-cartes
+sudo tar -xzf /tmp/server-package.tar.gz -C /opt/jeu-cartes --strip-components=1
+sudo chown -R jeucartes:jeucartes /opt/jeu-cartes
+sudo -u jeucartes env HOME=/opt/jeu-cartes godot --headless \
+  --path /opt/jeu-cartes --import
+sudo systemctl start jeu-cartes
+sudo journalctl -u jeu-cartes -f</code></pre>
+
+    <p>Pour Coolify : push sur le repo Git → Coolify auto-deploy (si activé) ou bouton Redeploy.</p>
+
+    <!-- ─── DÉPANNAGE ─────────────────────────────────── -->
+    <h2 id="troubleshoot">Dépannage</h2>
+
+    <h3>"Couldn't create an ENet host"</h3>
+    <p>Le port est déjà occupé. Vérifie qu'aucune autre instance ne tourne :</p>
+    <pre><code>sudo ss -ulnp | grep 9080
+sudo systemctl stop jeu-cartes  # si le service tourne en parallèle</code></pre>
+
+    <h3>"Could not create directory: /home/jeucartes"</h3>
+    <p>Tu as <code>ProtectHome=true</code> dans le service mais Godot veut écrire dans le home. Solution :
+    pointe HOME vers le dossier projet en ajoutant <code>Environment=HOME=/opt/jeu-cartes</code>
+    dans la section <code>[Service]</code>, et retire <code>ProtectHome=true</code>.</p>
+
+    <h3>Le client ne se connecte pas, rien dans les logs serveur</h3>
+    <p>Le paquet n'atteint pas le serveur. Diagnostique dans cet ordre :</p>
+    <ol>
+      <li><code>sudo ufw status</code> — la règle <code>9080/udp ALLOW</code> doit être présente</li>
+      <li>Firewall provider (Hetzner Cloud Console / OVH panel) — UDP 9080 doit être ouvert</li>
+      <li>Test depuis ton PC : <code>nc -uvz IP_VPS 9080</code> doit réussir</li>
+    </ol>
+
+    <h3>Le client se connecte mais est kické immédiatement</h3>
+    <p>Mauvais mot de passe ou rate-limit dépassé. Logs serveur :</p>
+    <pre><code>sudo journalctl -u jeu-cartes -n 50 | grep Kick</code></pre>
+
+    <h3>Le serveur crash en boucle au démarrage</h3>
+    <p>Lance manuellement pour voir l'erreur sans systemd :</p>
+    <pre><code>sudo -u jeucartes env HOME=/opt/jeu-cartes godot --headless \
+  --path /opt/jeu-cartes -- --server --port=9080 --start-on=2 --score=50</code></pre>
+
+    <!-- ─── SUPPORT ───────────────────────────────────── -->
+    <h2 id="support">Support</h2>
+
+    <p>Une question, un bug, une suggestion ?</p>
+
+    <p>Email : <a href="mailto:kmerek7@protonmail.com">kmerek7@protonmail.com</a></p>
+
+    <p>Inclus dans ton message :</p>
+    <ul>
+      <li>La version du jeu (visible en bas du menu principal)</li>
+      <li>Les logs serveur si pertinent (<code>sudo journalctl -u jeu-cartes -n 100</code>)</li>
+      <li>Une capture d'écran si c'est un souci visuel</li>
+      <li>Description du problème + comment le reproduire</li>
+    </ul>
+
+    <div class="doc-footer">
+      <h3>C'est tout 🎴</h3>
+      <p>Tu as maintenant tout ce qu'il faut pour héberger ton propre serveur 8 American.</p>
+      <a href="index.html" class="btn btn-primary">← Retour à l'accueil</a>
+    </div>
+
+  </article>
+</div>
+
+<script>
+  // Active link suivi sur le TOC
+  const sections = document.querySelectorAll('.doc-main h2[id]');
+  const tocLinks = document.querySelectorAll('.doc-toc a');
+
+  function updateActiveLink() {
+    const scrollPos = window.scrollY + 130;
+    let current = '';
+    sections.forEach(s => {
+      if (s.offsetTop <= scrollPos) current = s.id;
+    });
+    tocLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveLink, { passive: true });
+  updateActiveLink();
+
+  // Smooth scroll sur le TOC
+  tocLinks.forEach(a => {
+    a.addEventListener('click', (e) => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) {
+        e.preventDefault();
+        t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

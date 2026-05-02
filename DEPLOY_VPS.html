@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Auto-héberger un serveur — 8 American</title>
+<link rel="icon" type="image/png" href="assets/logo.png" />
+<link rel="stylesheet" href="style.css" />
+<style>
+  .doc {
+    max-width: 820px;
+    margin: 80px auto;
+    padding: 0 24px;
+  }
+  .doc h1 { color: var(--gold); font-size: 40px; margin-bottom: 12px; }
+  .doc h2 { color: var(--gold); font-size: 26px; margin: 48px 0 16px; border-bottom: 1px solid rgba(255,217,102,0.2); padding-bottom: 8px; }
+  .doc h3 { color: var(--gold-soft); margin: 24px 0 8px; }
+  .doc p { margin-bottom: 14px; color: var(--cream); }
+  .doc ul, .doc ol { margin: 0 0 16px 24px; color: var(--cream); }
+  .doc li { margin-bottom: 6px; }
+  .doc pre {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,217,102,0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    margin: 14px 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .doc code {
+    font-family: 'Consolas', 'Monaco', monospace;
+    color: var(--gold);
+  }
+  .doc pre code { color: var(--cream); }
+  .doc table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+  }
+  .doc th, .doc td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,217,102,0.15);
+  }
+  .doc th { color: var(--gold); }
+  .doc td { color: var(--cream-mute); font-size: 14px; }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 24px;
+    color: var(--gold);
+  }
+  .warn {
+    border-left: 3px solid var(--gold);
+    background: rgba(255,217,102,0.06);
+    padding: 12px 18px;
+    margin: 16px 0;
+    border-radius: 0 8px 8px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc">
+  <a href="index.html" class="back-link">← Retour à l'accueil</a>
+  <h1>Auto-héberger un serveur</h1>
+  <p>Guide v1.01.beta — durci : rate-limit RPC, mot de passe, utilisateur dédié non-root.</p>
+
+  <h2>Pré-requis</h2>
+  <ul>
+    <li>Linux x86_64 (Ubuntu/Debian recommandé)</li>
+    <li>1 CPU, 512 Mo RAM minimum</li>
+    <li>Port UDP 9080 ouvert (firewall + provider)</li>
+    <li>Accès SSH (sudo)</li>
+  </ul>
+
+  <h2>1️⃣ Créer un utilisateur dédié (non-root)</h2>
+  <pre><code>sudo useradd -r -m -s /bin/bash jeucartes
+sudo mkdir -p /opt/jeu-cartes
+sudo chown -R jeucartes:jeucartes /opt/jeu-cartes</code></pre>
+
+  <h2>2️⃣ Installer Godot</h2>
+  <pre><code>sudo apt update && sudo apt install -y wget unzip
+cd /opt
+sudo wget https://github.com/godotengine/godot/releases/download/4.6.2-stable/Godot_v4.6.2-stable_linux.x86_64.zip
+sudo unzip Godot_v4.6.2-stable_linux.x86_64.zip
+sudo mv Godot_v4.6.2-stable_linux.x86_64 godot
+sudo chmod +x godot
+sudo ln -sf /opt/godot /usr/local/bin/godot
+godot --version</code></pre>
+
+  <h2>3️⃣ Copier le projet</h2>
+  <p>Télécharge l'archive serveur depuis le site, puis :</p>
+  <pre><code>scp server-package.tar.gz user@TON_IP_VPS:/tmp/
+ssh user@TON_IP_VPS
+sudo tar -xzf /tmp/server-package.tar.gz -C /opt/jeu-cartes --strip-components=1
+sudo chown -R jeucartes:jeucartes /opt/jeu-cartes</code></pre>
+
+  <h2>4️⃣ Premier import (une fois)</h2>
+  <pre><code>sudo -u jeucartes env HOME=/opt/jeu-cartes godot --headless --path /opt/jeu-cartes --import</code></pre>
+
+  <h2>5️⃣ Service systemd (auto-restart)</h2>
+  <p>Crée <code>/etc/systemd/system/jeu-cartes.service</code> :</p>
+  <pre><code>[Unit]
+Description=8 American — serveur dédié
+After=network.target
+
+[Service]
+Type=simple
+User=jeucartes
+Group=jeucartes
+WorkingDirectory=/opt/jeu-cartes
+Environment=HOME=/opt/jeu-cartes
+ExecStart=/usr/local/bin/godot --headless --path /opt/jeu-cartes -- \
+  --server --port=9080 --start-on=2 --score=50 --password=CHANGE_MOI
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+PrivateTmp=true
+ReadWritePaths=/opt/jeu-cartes
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+  <div class="warn">
+    🔐 Remplace <code>CHANGE_MOI</code> par un mot de passe fort (12+ caractères). Génération rapide :
+    <br><code>openssl rand -base64 16</code>
+  </div>
+
+  <pre><code>sudo systemctl daemon-reload
+sudo systemctl enable --now jeu-cartes
+sudo journalctl -u jeu-cartes -f</code></pre>
+
+  <h2>6️⃣ Ouvrir le port (firewall)</h2>
+  <pre><code>sudo ufw allow 9080/udp
+sudo ufw reload</code></pre>
+  <p>Côté provider (panel web Hetzner / OVH / DigitalOcean), ouvre aussi <strong>UDP 9080</strong>.</p>
+
+  <h2>7️⃣ Connexion depuis le client</h2>
+  <ol>
+    <li>Lance le client Windows</li>
+    <li>"Multijoueur en ligne" → onglet "Rejoindre"</li>
+    <li>IP : ton IP VPS publique</li>
+    <li>Port : 9080</li>
+    <li>Mot de passe : celui défini dans <code>--password=</code></li>
+    <li>Rejoindre</li>
+  </ol>
+
+  <h2>Flags CLI disponibles</h2>
+  <table>
+    <tr><th>Flag</th><th>Défaut</th><th>Description</th></tr>
+    <tr><td><code>--server</code></td><td>—</td><td>Active le mode dédié</td></tr>
+    <tr><td><code>--port=X</code></td><td>9080</td><td>Port UDP d'écoute</td></tr>
+    <tr><td><code>--start-on=N</code></td><td>2</td><td>Démarre auto à N joueurs</td></tr>
+    <tr><td><code>--score=X</code></td><td>50</td><td>Score cible (50 ou 100)</td></tr>
+    <tr><td><code>--password=XXX</code></td><td>(aucun)</td><td>Mot de passe requis</td></tr>
+  </table>
+
+  <h2>Mise à jour</h2>
+  <pre><code>scp new-server-package.tar.gz user@VPS:/tmp/
+ssh user@VPS
+sudo systemctl stop jeu-cartes
+sudo tar -xzf /tmp/new-server-package.tar.gz -C /opt/jeu-cartes --strip-components=1
+sudo chown -R jeucartes:jeucartes /opt/jeu-cartes
+sudo -u jeucartes env HOME=/opt/jeu-cartes godot --headless --path /opt/jeu-cartes --import
+sudo systemctl start jeu-cartes</code></pre>
+
+  <h2>Sécurité — récap v1.01.beta</h2>
+  <ul>
+    <li>Utilisateur non-root via systemd <code>User=jeucartes</code></li>
+    <li>Hardening systemd (<code>NoNewPrivileges</code>, <code>ProtectSystem</code>, <code>PrivateTmp</code>)</li>
+    <li>Mot de passe serveur, kick si invalide</li>
+    <li>Rate-limit 30 RPC/sec/peer, kick auto si dépassé</li>
+    <li>Pseudo plafonné à 32 caractères, caractères de contrôle filtrés</li>
+    <li>Validation : seul un joueur de la partie peut continuer la manche</li>
+  </ul>
+  <p><em>Limites :</em> trafic ENet non chiffré (sniffer Wi-Fi voit les noms/scores). Pour usage public sur Internet exposé, ajouter DTLS dans une version future.</p>
+
+  <a href="index.html" class="back-link">← Retour à l'accueil</a>
+</div>
+
+</body>
+</html>

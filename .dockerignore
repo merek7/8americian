@@ -1,0 +1,6 @@
+DEPLOY_SITE.md
+DEPLOY_COOLIFY.md
+.git
+.gitignore
+*.md
+node_modules
